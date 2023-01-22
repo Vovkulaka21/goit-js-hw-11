@@ -41,57 +41,46 @@ async function getFetch() {
     );
 
     // console.log(responce);
-    return responce.data;
-  } catch (error) {
-
-    throw new error
-
-  };
-};
-
-function onInputSearch(event) {
-  searchText = event.target.value.trim();
-}
-
-async function LoadMore() {
-  try {
-    page += 1;
-    const { data } = await getFetch();
-    if (data.hits.length === 0) {
-      return Notiflix.Notify.info(
-        "We're sorry, but you've reached the end of search results."
-      );
-    }
-    render(data);
-    ligthbox.refresh();
+    return responce;
   } catch (error) {
     console.log(error);
   }
 }
 
+function onInputSearch(event) {
+  searchText = event.target.value;
+}
+
+async function LoadMore() {
+  page += 1;
+  const { data } = await getFetch();
+  if (data.hits.length === 0) {
+    return Notiflix.Notify.info(
+      "We're sorry, but you've reached the end of search results."
+    );
+  }
+  render(data);
+  ligthbox.refresh();
+}
+
 async function onSearh(e) {
   e.preventDefault();
 
-  try {
-    const { data } = await getFetch();
-    page = 1;
-    clearRender();
-    if (data.hits.length === 0) {
-      return Notiflix.Notify.warning(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
-    Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-    console.log(data);
-    render(data);
-    ligthbox.refresh();
-  
-    refs.loadMore.classList.remove('is-hidden');
-  } catch (error) {
-    console.log(error);
-  };
+  const { data } = await getFetch();
+  page = 1;
+  clearRender();
+  if (data.hits.length === 0) {
+    return Notiflix.Notify.warning(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+  Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+  console.log(data);
+  render(data);
+  ligthbox.refresh();
 
-};
+  refs.loadMore.classList.remove('is-hidden');
+}
 
 function render({ hits }) {
   // console.dir(data);
