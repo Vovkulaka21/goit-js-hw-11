@@ -12,17 +12,22 @@ const KEY_URL = '32167843-8e8cdf0804a85ffadb96a7b65';
 
 
 const refs = {
+
   input: document.querySelector('.search-form').searchQuery,
   form: document.querySelector('.search-form'),
 
   gallery: document.querySelector('.gallery'),
   loadMore: document.querySelector('.load-more'),
+
 };
 
+const text = ref.input.target.value;
+
 refs.form.addEventListener('submit', onSearh);
-refs.input.addEventListener('input', _debounce(onInputSearch, 300));
+refs.input.addEventListener('input', _debounce(text, 300));
 refs.loadMore.addEventListener('click', LoadMore);
 
+console.dir(refs.input.target);
 let searchText = '';
 let markUpCards = [];
 let page = 1;
@@ -30,6 +35,7 @@ const ligthbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
   scrollZoom: false,
+  
 });
 
 console.log(searchText);
@@ -43,12 +49,8 @@ async function getFetch() {
     // console.log(responce);
     return responce;
   } catch (error) {
-    console.log(error);
+    throw new error('Oops');
   }
-}
-
-function onInputSearch(event) {
-  searchText = event.target.value;
 }
 
 async function LoadMore() {
@@ -66,20 +68,25 @@ async function LoadMore() {
 async function onSearh(e) {
   e.preventDefault();
 
-  const { data } = await getFetch();
-  page = 1;
-  clearRender();
-  if (data.hits.length === 0) {
-    return Notiflix.Notify.warning(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
+  try {
+    const { data } = await getFetch();
+    page = 1;
+    clearRender();
+    if (data.hits.length === 0) {
+      return Notiflix.Notify.warning(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
+    Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+    console.log(data);
+    render(data);
+    ligthbox.refresh();
+  
+    refs.loadMore.classList.remove('is-hidden');
+  } catch (error) {
+    console.log(error);
   }
-  Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-  console.log(data);
-  render(data);
-  ligthbox.refresh();
 
-  refs.loadMore.classList.remove('is-hidden');
 }
 
 function render({ hits }) {
