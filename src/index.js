@@ -9,6 +9,8 @@ import _debounce from 'lodash.debounce';
 const BASE_URL = 'https://pixabay.com/api/';
 const KEY_URL = '32167843-8e8cdf0804a85ffadb96a7b65';
 
+
+
 const refs = {
   input: document.querySelector('.search-form').searchQuery,
   form: document.querySelector('.search-form'),
@@ -45,8 +47,8 @@ async function getFetch() {
   }
 }
 
-function onInputSearch(e) {
-  searchText = e.target.value;
+function onInputSearch(event) {
+  searchText = event.target.value;
 }
 
 async function LoadMore() {
@@ -63,6 +65,7 @@ async function LoadMore() {
 
 async function onSearh(e) {
   e.preventDefault();
+
   const { data } = await getFetch();
   page = 1;
   clearRender();
