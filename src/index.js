@@ -35,7 +35,7 @@ const ligthbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
   scrollZoom: false,
-  
+
 });
 
 console.log(searchText);
@@ -54,16 +54,22 @@ async function getFetch() {
 }
 
 async function LoadMore() {
-  page += 1;
-  const { data } = await getFetch();
-  if (data.hits.length === 0) {
-    return Notiflix.Notify.info(
-      "We're sorry, but you've reached the end of search results."
-    );
+
+  try {
+    page += 1;
+    const { data } = await getFetch();
+    if (data.hits.length === 0) {
+      return Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+    }
+    render(data);
+    ligthbox.refresh();
+  } catch (error) {
+    console.log(error);
   }
-  render(data);
-  ligthbox.refresh();
-}
+
+};
 
 async function onSearh(e) {
   e.preventDefault();
